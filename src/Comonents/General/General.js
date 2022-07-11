@@ -13,7 +13,7 @@ const initiaor= async()=>{
  else {setisLoading(true)
   try{
    const balance = await getBalance()
-   setBalance(balance)
+   setBalance(balance/1000/1000/1000)
   }catch(e){
       console.log(e)
   }
