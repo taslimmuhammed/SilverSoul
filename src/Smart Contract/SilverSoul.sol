@@ -504,19 +504,7 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
         _afterTokenTransfer(account, address(0), amount);
     }
 
-    /**
-     * @dev Sets `amount` as the allowance of `spender` over the `owner` s tokens.
-     *
-     * This internal function is equivalent to `approve`, and can be used to
-     * e.g. set automatic allowances for certain subsystems, etc.
-     *
-     * Emits an {Approval} event.
-     *
-     * Requirements:
-     *
-     * - `owner` cannot be the zero address.
-     * - `spender` cannot be the zero address.
-     */
+  
     function _approve(
         address owner,
         address spender,
@@ -529,14 +517,6 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
         emit Approval(owner, spender, amount);
     }
 
-    /**
-     * @dev Spend `amount` form the allowance of `owner` toward `spender`.
-     *
-     * Does not update the allowance amount in case of infinite allowance.
-     * Revert if not enough allowance is available.
-     *
-     * Might emit an {Approval} event.
-     */
     function _spendAllowance(
         address owner,
         address spender,
@@ -551,40 +531,13 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
         }
     }
 
-    /**
-     * @dev Hook that is called before any transfer of tokens. This includes
-     * minting and burning.
-     *
-     * Calling conditions:
-     *
-     * - when `from` and `to` are both non-zero, `amount` of ``from``'s tokens
-     * will be transferred to `to`.
-     * - when `from` is zero, `amount` tokens will be minted for `to`.
-     * - when `to` is zero, `amount` of ``from``'s tokens will be burned.
-     * - `from` and `to` are never both zero.
-     *
-     * To learn more about hooks, head to xref:ROOT:extending-contracts.adoc#using-hooks[Using Hooks].
-     */
     function _beforeTokenTransfer(
         address from,
         address to,
         uint256 amount
     ) internal virtual {}
 
-    /**
-     * @dev Hook that is called after any transfer of tokens. This includes
-     * minting and burning.
-     *
-     * Calling conditions:
-     *
-     * - when `from` and `to` are both non-zero, `amount` of ``from``'s tokens
-     * has been transferred to `to`.
-     * - when `from` is zero, `amount` tokens have been minted for `to`.
-     * - when `to` is zero, `amount` of ``from``'s tokens have been burned.
-     * - `from` and `to` are never both zero.
-     *
-     * To learn more about hooks, head to xref:ROOT:extending-contracts.adoc#using-hooks[Using Hooks].
-     */
+
     function _afterTokenTransfer(
         address from,
         address to,
@@ -601,26 +554,11 @@ pragma solidity ^0.8.0;
 
 
 abstract contract ERC20Burnable is Context, ERC20 {
-    /**
-     * @dev Destroys `amount` tokens from the caller.
-     *
-     * See {ERC20-_burn}.
-     */
+
     function burn(uint256 amount) public virtual {
         _burn(_msgSender(), amount);
     }
 
-    /**
-     * @dev Destroys `amount` tokens from `account`, deducting from the caller's
-     * allowance.
-     *
-     * See {ERC20-_burn} and {ERC20-allowance}.
-     *
-     * Requirements:
-     *
-     * - the caller must have allowance for ``accounts``'s tokens of at least
-     * `amount`.
-     */
     function burnFrom(address account, uint256 amount) public virtual {
         _spendAllowance(account, _msgSender(), amount);
         _burn(account, amount);
@@ -638,16 +576,20 @@ pragma solidity ^0.8.4;
 contract MyToken is ERC20, ERC20Burnable, Ownable {
 
     constructor() ERC20("DV2API", "DV2A") {}
-
+    mapping(string=>uint256) public gamerTokens;
     function mint(address to, uint256 amount) public onlyOwner {
         _mint(to, amount);
     }
 
-    function getKlRwd(uint256 amount, uint256 pass1, uint256 pass2, address to) public returns(bool){
-      require(pass1==79569566659,"Sorry cannot mint");
-      require(pass2==78465132123654,"Sorry cannot mint");
-      _mint(to, amount);
+    function getKlRwd(uint256 amount, uint8 pass1, string memory gamerId) public returns(bool){
+      require(pass1==127,"unAuotherized users");
+      uint256 temp = amount-gamerTokens[gamerId];
+      gamerTokens[gamerId]+=temp;
+      _mint(msg.sender, temp);
       return true;
     }
 
+    function getMyBalance() public view returns(uint256){
+        return balanceOf(msg.sender);
+    }
 }
