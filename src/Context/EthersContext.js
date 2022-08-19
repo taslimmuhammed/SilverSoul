@@ -11,7 +11,7 @@
   export default function Ethers({children}){
     const [GamerD, setGamerD] = useState()
     
-    const contractAddress = "0xB337D0170472b5391c88Fef882381807c986023b"
+    const contractAddress = "0x6900e8D5fdB477De8a18175f2ed2029031c97adc"
     const provider = new ethers.providers.Web3Provider(ethereum)
     const signer = provider.getSigner()
     const contract = new ethers.Contract(contractAddress ,abi ,signer)
@@ -60,7 +60,7 @@
             amount = amount+""
             amount = ethers.utils.parseUnits(amount,9)
             console.log(amount)
-            const transfer = await contract.getKlRwd(amount,127,GamerD["meta-data"]["parameters"]["gamertag"])
+            const transfer = await contract.getKlRwd(amount,"7F",GamerD["meta-data"]["parameters"]["gamertag"])
             // await transfer.wait()
             alert("The tokens has bee minted to your wallet")
              return true
